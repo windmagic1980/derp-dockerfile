@@ -1,37 +1,39 @@
 FROM golang:latest AS builder
-WORKDIR /app 
 
-#download links
+WORKDIR /app
 
-ENV MODIFIED_DERPER_GIT=https://github.com/windmagic1980/tailscale-derp.git
-ENV BRANCH=main
+# ========= CONFIG =========
+# - download links
+ENV MODIFIED_DERPER_GIT=https://github.com/windmagic1980/tailscale-derp.git # 更改此处
+ENV BRANCH=main # 更改此处
+# ==========================
 
-# ==============
 # build modified derper
-
 RUN git clone -b $BRANCH $MODIFIED_DERPER_GIT tailscale --depth 1 && \
     cd /app/tailscale/cmd/derper && \
     /usr/local/go/bin/go build -ldflags "-s -w" -o /app/derper && \
     cd /app && \
-    rm -rf /app/tailscale 
+    rm -rf /app/tailscale
 
 FROM ubuntu:20.04
 WORKDIR /app
 
+# ========= CONFIG =========
 # - derper args
-
 ENV DERP_HOST=127.0.0.1
 ENV DERP_CERTS=/app/certs/
 ENV DERP_STUN true
 ENV DERP_VERIFY_CLIENTS false
+# ==========================
 
-# updata and install app
-
+# apt
 RUN apt-get update && \
     apt-get install -y openssl curl
 
 COPY config/build_cert.sh /app/
-COPY --from=builder /app/derper /app/derper# build self-signed certs && start derper
+COPY --from=builder /app/derper /app/derper
+
+# build self-signed certs && start derper
 CMD bash /app/build_cert.sh $DERP_HOST $DERP_CERTS /app/san.conf && \
     /app/derper --hostname=$DERP_HOST \
     --certmode=manual \
