@@ -1,5 +1,3 @@
-# build_cert.sh
-
 #!/bin/bash
 
 CERT_HOST=$1
@@ -7,7 +5,7 @@ CERT_DIR=$2
 CONF_FILE=$3
 
 echo "[req]
-default_bits  = 2048
+default_bits = 2048
 distinguished_name = req_distinguished_name
 req_extensions = req_ext
 x509_extensions = v3_req
