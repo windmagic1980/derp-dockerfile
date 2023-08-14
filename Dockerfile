@@ -30,7 +30,7 @@ ENV DERP_VERIFY_CLIENTS=false
 RUN apt-get update && \
     apt-get install -y openssl curl
 
-COPY config/build_cert.sh /app/
+COPY Config/build_cert.sh /app/
 COPY --from=builder /app/derper /app/derper
 
 # build self-signed certs && start derper
