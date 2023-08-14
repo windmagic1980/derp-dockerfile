@@ -15,7 +15,7 @@ RUN git clone -b $BRANCH $MODIFIED_DERPER_GIT tailscale --depth 1 && \
     cd /app && \
     rm -rf /app/tailscale
 
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 WORKDIR /app
 
 # ========= CONFIG =========
